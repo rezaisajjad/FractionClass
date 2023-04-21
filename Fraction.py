@@ -5,10 +5,8 @@ class Fraction(object):
     def __init__(self, Numerator: int, DeNumerator: int = 1):
         super(Fraction, self).__init__()
         gcd = Fraction.__gcd__(Numerator, DeNumerator)
-        Numerator //= gcd
-        DeNumerator //= gcd
-        self.Numerator = Numerator
-        self.DeNumerator = DeNumerator
+        self.Numerator = Numerator // gcd
+        self.DeNumerator = DeNumerator // gcd
 
     def __str__(self) -> str:
         return f"{self.Numerator}/{self.DeNumerator}"
@@ -26,34 +24,31 @@ class Fraction(object):
         return a if a != 0 else b
 
     def __equalize__(self, other):
-        self: Fraction = self
         other: Fraction = other
-
-        self.DeNumerator = other.DeNumerator
-        self.Numerator = other.Numerator
+        self.DeNumerator, self.Numerator = other.DeNumerator, other.Numerator
         return self
 
     def copy(self):
         return Fraction(1).__equalize__(self)
 
+    def __convertToFraction__(self):
+        if type(self) is int:
+            return Fraction(self)
+        return self
+
     def __add__(self, other):
-        self: Fraction = self
-        other: Fraction = other
-        if type(other) is int:
-            other = Fraction(other)
+        other: Fraction = Fraction.__convertToFraction__(other)
+
         Numerator = self.Numerator*other.DeNumerator + self.DeNumerator*other.Numerator
         DeNumerator = self.DeNumerator * other.DeNumerator
         return Fraction(Numerator, DeNumerator)
 
     def __sub__(self, other):
-        other = other*-1
-        return self+other
+        return self+(-other)
 
     def __mul__(self, other):
-        self: Fraction = self
-        other: Fraction = other
-        if type(other) is int:
-            other = Fraction(other)
+        other: Fraction = Fraction.__convertToFraction__(other)
+
         Numerator = self.Numerator*other.Numerator
         DeNumerator = self.DeNumerator * other.DeNumerator
         return Fraction(Numerator, DeNumerator)
@@ -62,7 +57,8 @@ class Fraction(object):
         return self*other
 
     def __truediv__(self, other):
-        return self * (~other)
+        other: Fraction = Fraction.__convertToFraction__(other)
+        return self * ~other
 
     def __floordiv__(self, other):
         res: Fraction = self/other
@@ -110,18 +106,14 @@ class Fraction(object):
         return -1*self.copy()
 
     def __magnitude__(self, other) -> tuple[int, int]:
-        self: Fraction = self
         other: Fraction = other
         res = Fraction(self.Numerator*other.DeNumerator,
                        self.DeNumerator*other.Numerator)
         return res.Numerator, res.DeNumerator
 
     def __compare__(self, other, func) -> bool:
-        if type(other) is int:
-            other = Fraction(other)
-        magnitude: tuple(int, int) = self.__magnitude__(other)
-        self: int = magnitude[0]
-        other: int = magnitude[1]
+        other: Fraction = Fraction.__convertToFraction__(other)
+        self, other = self.__magnitude__(other)
         return func(self, other)
 
     def __lt__(self, other):
@@ -141,3 +133,9 @@ class Fraction(object):
 
     def __ne__(self, other):
         return self.__compare__(other, int.__ne__)
+
+
+a = Fraction(1, 21)
+b = Fraction(2, 7)
+
+print(a > 5)
