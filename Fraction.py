@@ -11,6 +11,18 @@ class Fraction(object):
     def __str__(self) -> str:
         return f"{self.Numerator}/{self.DeNumerator}"
 
+    def __int__(self) -> int:
+        return self.Numerator//self.DeNumerator
+
+    def __float__(self) -> float:
+        return self.Numerator/self.DeNumerator
+
+    def __floor__(self) -> int:
+        return int(self)
+
+    def __ceil__(self) -> int:
+        return int(self) if self.Numerator % self.DeNumerator == 0 else int(self)+1
+
     def __gcd__(a: int, b: int) -> int:
         if a < 0:
             a *= -1
