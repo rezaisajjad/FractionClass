@@ -146,8 +146,3 @@ class Fraction(object):
     def __ne__(self, other):
         return self.__compare__(other, int.__ne__)
 
-
-a = Fraction(1, 21)
-b = Fraction(2, 7)
-
-print(a > 5)
